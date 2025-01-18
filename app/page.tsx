@@ -1,3 +1,3 @@
-export default function Home() {
-  return <h1 className='text-red-400'>Init</h1>
-}
+import { Start } from '@/pages/start'
+
+export default Start
