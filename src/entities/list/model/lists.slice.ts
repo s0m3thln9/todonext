@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
-type ListId = string
-type ListItemId = string
+export type ListId = string
+export type ListItemId = string
 
 type List = {
   name: string
@@ -33,6 +33,7 @@ export const listsSlice = createSlice({
   initialState,
   selectors: {
     selectLists: (state) => state.ids.map((id) => state.entities[id]),
+    selectSelectedList: (state) => state.entities[state.selectedListId ?? ''],
   },
   reducers: {
     addList: (state, action: PayloadAction<{ name: string }>) => {
@@ -44,6 +45,37 @@ export const listsSlice = createSlice({
         id,
         items: [],
       }
+    },
+    selectList: (state, action: PayloadAction<{ selectedListId: ListId }>) => {
+      const { selectedListId } = action.payload
+      state.selectedListId = selectedListId
+    },
+    addListItem: (
+      state,
+      action: PayloadAction<{ listId: ListId; name: string }>,
+    ) => {
+      const { listId, name } = action.payload
+      const id = uuidv4()
+      state.entities[listId].items.push({
+        name,
+        id,
+        checked: false,
+      })
+    },
+    checkListItem: (
+      state,
+      action: PayloadAction<{
+        listId: ListId
+        listItemId: ListItemId
+        checked: boolean
+      }>,
+    ) => {
+      const { listId, listItemId, checked } = action.payload
+      const list = state.entities[listId]
+      if (!list) return
+      const item = list.items.find((item) => item.id === listItemId)
+      if (!item) return
+      item.checked = checked
     },
   },
 })

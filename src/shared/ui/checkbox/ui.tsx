@@ -1,11 +1,31 @@
 'use client'
-import { useState, MouseEvent } from 'react'
+import { MouseEvent, FC } from 'react'
+import { useAppDispatch } from '@/app/stores'
+import { listsSlice } from '@/entities/list'
+import { ListId, ListItemId } from '@/entities/list/model'
 
-export const Checkbox = () => {
-  const [isChecked, setIsChecked] = useState(true)
+interface CheckboxProps {
+  checked: boolean
+  listId: ListId
+  listItemId: ListItemId
+}
+
+export const Checkbox: FC<CheckboxProps> = ({
+  checked,
+  listId,
+  listItemId,
+}) => {
+  const dispatch = useAppDispatch()
+
   const handleClick = (e: MouseEvent) => {
     e.preventDefault()
-    setIsChecked((prev) => !prev)
+    dispatch(
+      listsSlice.actions.checkListItem({
+        listId,
+        listItemId,
+        checked: !checked,
+      }),
+    )
   }
   return (
     <div
@@ -22,7 +42,7 @@ export const Checkbox = () => {
         className='flex items-center cursor-pointer'
       >
         <span className='w-6 h-6 inline-block bg-white border border-gray-300 rounded-md flex-shrink-0 transition duration-200 ease-in-out'>
-          {isChecked && (
+          {checked && (
             <svg
               className='w-6 h-6 text-blue-600'
               fill='none'
