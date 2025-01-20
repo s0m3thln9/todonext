@@ -1,31 +1,46 @@
 'use client'
 
-import { Button, Input } from '@/shared/ui'
+import { Button, Input, Modal } from '@/shared/ui'
 import { List, listsSlice } from '@/entities/list'
 import { ListItem } from '@/entities/list'
 import { useAppDispatch, useAppSelector } from '@/app/stores'
 import { ChangeEvent, useState } from 'react'
 import { ListId } from '@/entities/list/model'
+import { createPortal } from 'react-dom'
 
 export const TodoListMain = () => {
   const dispatch = useAppDispatch()
   const lists = useAppSelector(listsSlice.selectors.selectLists)
   const selectedList = useAppSelector(listsSlice.selectors.selectSelectedList)
   const [listName, setListName] = useState('')
+  const [listItemName, setListItemName] = useState('')
+  const [modal, setModal] = useState(false)
 
   const onChangeListName = (e: ChangeEvent<HTMLInputElement>) => {
     setListName(e.target.value)
+  }
+
+  const onChangeListItemName = (e: ChangeEvent<HTMLInputElement>) => {
+    setListItemName(e.target.value)
   }
 
   const addList = () => {
     dispatch(listsSlice.actions.addList({ name: listName }))
   }
 
+  const openModal = () => {
+    setModal(true)
+  }
+
+  const closeModal = () => {
+    setModal(false)
+  }
+
   const addListItem = () => {
     dispatch(
       listsSlice.actions.addListItem({
         listId: selectedList?.id,
-        name: listName,
+        name: listItemName,
       }),
     )
   }
@@ -39,7 +54,7 @@ export const TodoListMain = () => {
       <div className='w-1/2 flex flex-col items-start pl-4'>
         <div>
           <Input
-            placeholder='List name'
+            placeholder='Enter the list name'
             value={listName}
             onChange={onChangeListName}
           />
@@ -59,7 +74,17 @@ export const TodoListMain = () => {
         <h2 className='text-2xl'>{selectedList?.name || 'Select list'}</h2>
         {selectedList && (
           <div className='mt-2'>
-            <Button onClick={addListItem}>Add item</Button>
+            <Button onClick={openModal}>Add item</Button>
+            {modal &&
+              createPortal(
+                <Modal
+                  onAdd={addListItem}
+                  onClose={closeModal}
+                  value={listItemName}
+                  onChange={onChangeListItemName}
+                />,
+                document.body,
+              )}
             <ul className='flex flex-col mt-2 gap-2'>
               {selectedList.items.map((item) => (
                 <ListItem
