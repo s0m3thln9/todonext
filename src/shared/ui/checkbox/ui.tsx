@@ -26,6 +26,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         checked: !checked,
       }),
     )
+    dispatch(listsSlice.actions.save())
   }
   return (
     <div

@@ -86,5 +86,16 @@ export const listsSlice = createSlice({
       if (!list) return
       list.items = list.items.filter((item) => item.id !== listItemId)
     },
+    save: (state) => {
+      localStorage.setItem('lists', JSON.stringify(state))
+    },
+    load: (state) => {
+      const data = localStorage.getItem('lists')
+      if (!data) return
+      const lists = JSON.parse(data)
+      state.ids = lists.ids
+      state.entities = lists.entities
+      state.selectedListId = undefined
+    },
   },
 })

@@ -4,7 +4,7 @@ import { Button, Input, Modal } from '@/shared/ui'
 import { List, listsSlice } from '@/entities/list'
 import { ListItem } from '@/entities/list'
 import { useAppDispatch, useAppSelector } from '@/app/stores'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { ListId } from '@/entities/list/model'
 import { createPortal } from 'react-dom'
 
@@ -16,6 +16,10 @@ export const TodoListMain = () => {
   const [listItemName, setListItemName] = useState('')
   const [modal, setModal] = useState(false)
 
+  useEffect(() => {
+    dispatch(listsSlice.actions.load())
+  }, [dispatch])
+
   const onChangeListName = (e: ChangeEvent<HTMLInputElement>) => {
     setListName(e.target.value)
   }
@@ -26,6 +30,7 @@ export const TodoListMain = () => {
 
   const addList = () => {
     dispatch(listsSlice.actions.addList({ name: listName }))
+    dispatch(listsSlice.actions.save())
   }
 
   const openModal = () => {
@@ -43,6 +48,7 @@ export const TodoListMain = () => {
         name: listItemName,
       }),
     )
+    dispatch(listsSlice.actions.save())
   }
 
   const selectList = (id: ListId) => {
