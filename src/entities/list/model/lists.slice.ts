@@ -77,5 +77,14 @@ export const listsSlice = createSlice({
       if (!item) return
       item.checked = checked
     },
+    deleteListItem: (
+      state,
+      action: PayloadAction<{ listId: ListId; listItemId: ListItemId }>,
+    ) => {
+      const { listId, listItemId } = action.payload
+      const list = state.entities[listId]
+      if (!list) return
+      list.items = list.items.filter((item) => item.id !== listItemId)
+    },
   },
 })

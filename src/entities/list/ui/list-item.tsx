@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Button, Checkbox } from '@/shared/ui'
-import { ListId, ListItemId } from '@/entities/list/model'
+import { ListId, ListItemId, listsSlice } from '@/entities/list/model'
+import { useAppDispatch } from '@/app/stores'
 
 interface ListItemProps {
   name: string
@@ -15,6 +16,11 @@ export const ListItem: FC<ListItemProps> = ({
   listId,
   listItemId,
 }) => {
+  const dispatch = useAppDispatch()
+  const deleteItem = () => {
+    dispatch(listsSlice.actions.deleteListItem({ listId, listItemId }))
+  }
+
   return (
     <li className='flex items-center justify-between max-w-[300px]'>
       <Checkbox
@@ -23,7 +29,12 @@ export const ListItem: FC<ListItemProps> = ({
         listItemId={listItemId}
       />
       <span className='ml-4'>{name}</span>
-      <Button className='ml-4'>Delete</Button>
+      <Button
+        className='ml-4'
+        onClick={deleteItem}
+      >
+        Delete
+      </Button>
     </li>
   )
 }
